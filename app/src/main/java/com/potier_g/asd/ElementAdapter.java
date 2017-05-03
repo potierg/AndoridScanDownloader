@@ -81,7 +81,7 @@ public class ElementAdapter extends ArrayAdapter<Element> {
         }
 
         else
-            viewHolder.icon.setImageDrawable(new ColorDrawable(255));
+            viewHolder.icon.setImageResource(R.mipmap.icon_folder);
 
         return convertView;
     }

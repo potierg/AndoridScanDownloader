@@ -26,6 +26,7 @@ public class ExplorerActivity extends AppCompatActivity implements NavigationVie
     private List<Element> listElements = new ArrayList<Element>();
 
     private String current_path;
+    private ArrayList<String> pictures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class ExplorerActivity extends AppCompatActivity implements NavigationVie
         setSupportActionBar(toolbar);
 
         gridView = (GridView) findViewById(R.id.gridFile);
+
+        pictures = new ArrayList<String>();
 
         Intent intent = getIntent();
         if (intent.getStringExtra("path") != null)
@@ -55,12 +58,28 @@ public class ExplorerActivity extends AppCompatActivity implements NavigationVie
 
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Log.d("Value => ", listElements.get(position).getPath() );
-                current_path = listElements.get(position).getPath();
 
                 if (listElements.get(position).getIs_file() == false)
                 {
+                    current_path = listElements.get(position).getPath();
                     Intent myIntent = new Intent(ExplorerActivity.this, ExplorerActivity.class);
                     myIntent.putExtra("path", current_path);
+                    ExplorerActivity.this.startActivity(myIntent);
+                }
+                else
+                {
+                    Intent myIntent = new Intent(ExplorerActivity.this, ReaderActivity.class);
+                    myIntent.putStringArrayListExtra("picturesPath", pictures);
+
+                    int page = 0;
+
+                    for (int c = 0; c < pictures.size(); c++)
+                    {
+                        if (pictures.get(c) == listElements.get(position).getPath())
+                            page = c;
+                    }
+
+                    myIntent.putExtra("nbPage", page);
                     ExplorerActivity.this.startActivity(myIntent);
                 }
             }
@@ -136,7 +155,10 @@ public class ExplorerActivity extends AppCompatActivity implements NavigationVie
             if (inFile.isDirectory())
                 listElements.add(new Element(inFile.getName(), inFile.getAbsolutePath(), false));
             else
+            {
                 listElements.add(new Element(inFile.getName(), inFile.getAbsolutePath(), true));
+                pictures.add(inFile.getAbsolutePath());
+            }
 
         }
 
